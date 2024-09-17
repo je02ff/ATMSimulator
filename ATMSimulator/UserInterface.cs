@@ -9,6 +9,8 @@ public class UserInterface
     private static int _origCol;
     private const int BoxWidth = 100;
     private const int BoxHeight = 30;
+    private const int OptionBoxWidth = 25;
+    private const int OptionBoxHeight = 4;
     private static string _title = "-^-$- ATM -$-^-";
     private static string _loginPrompt = "Please enter 6-digit account number: ";
 
@@ -17,26 +19,26 @@ public class UserInterface
         //TODO: draw box with title screen at top Below title bar, prompt input for acct#
         DrawBox(BoxWidth, BoxHeight);
         Login();
+        DrawOption("1. Balance", OptionBoxWidth, 5);
+        DrawOption("1. Balance", OptionBoxWidth*2+10, 5);
         while (true)
         {
             string userInput;
-            drawOptions();
-            SelectOption();
         }
     }
 
     private void Login()
     {
         GetUserAccountNumber();
-        GetUserPin();
-        AuthenticateUser();
+        // GetUserPin();
+        // AuthenticateUser();
     }
 
     private void GetUserAccountNumber()
     {
         const int inputRow = 4;
         const int inputCol = 2;
-        const int maxInputLength  = 6;
+        const int maxInputLength = 6;
         bool isValidInput;
 
         do
@@ -47,13 +49,12 @@ public class UserInterface
             var inputUserAccount = GetUserInput(maxInputLength);
             WriteAt(new string(' ', 6), inputCol + _loginPrompt.Length, inputRow);
             isValidInput = IsValidAccountNumber(inputUserAccount);
-            
+
             if (!isValidInput)
             {
                 InvalidText();
                 Thread.Sleep(1000);
             }
-            
         } while (!isValidInput);
 
         WriteAt(new string(' ', BoxWidth - 4), inputCol, inputRow);
@@ -63,13 +64,15 @@ public class UserInterface
     {
         StringBuilder sb = new StringBuilder();
 
-        while(true) {
+        while (true)
+        {
             ConsoleKeyInfo keyInfo = Console.ReadKey();
             if (keyInfo.Key == ConsoleKey.Enter)
             {
                 Console.Beep();
                 break;
             }
+
             sb.Append(keyInfo.KeyChar);
             if (sb.Length >= maxLength)
             {
@@ -81,6 +84,16 @@ public class UserInterface
         return sb.ToString();
     }
 
+    private static void DrawOption(string title, int x, int y)
+    {
+        
+
+        for (var i = 1; i < OptionBoxWidth; i++) WriteAt("-", i + x, y);
+        for (var i = 1; i < OptionBoxWidth; i++) WriteAt("-", i + x, y + OptionBoxHeight);
+        for (var i = 1; i < OptionBoxHeight; i++) WriteAt("|", x, y + i);
+        for (var i = 1; i < OptionBoxHeight; i++) WriteAt("|", x + OptionBoxWidth, y + i);
+        WriteAt(title, x + (OptionBoxWidth / 2 - title.Length / 2), y + OptionBoxHeight / 2);
+    }
 
     private static void DrawBox(int width, int height)
     {
