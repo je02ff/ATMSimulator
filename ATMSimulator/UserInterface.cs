@@ -7,86 +7,78 @@ public class UserInterface
 {
     private static int _origRow;
     private static int _origCol;
-    private static readonly int _boxWidth = 100;
-    private static readonly int _boxHeight = 30;
+    private const int BoxWidth = 100;
+    private const int BoxHeight = 30;
     private static string _title = "-^-$- ATM -$-^-";
     private static string _loginPrompt = "Please enter 6-digit account number: ";
-    private ConsoleColor _titleTextColor = ConsoleColor.Black;
-    private ConsoleColor _titleBackgroundColor = ConsoleColor.DarkGreen;
 
     public void DisplayUi()
     {
         //TODO: draw box with title screen at top Below title bar, prompt input for acct#
-        DrawBox(_boxWidth, _boxHeight);
+        DrawBox(BoxWidth, BoxHeight);
         Login();
         while (true)
         {
             string userInput;
+            drawOptions();
+            SelectOption();
         }
     }
 
     private void Login()
     {
-        string userInput;
-        int inputRow = 4;
-        int inputCol = 2;
+        GetUserAccountNumber();
+        GetUserPin();
+        AuthenticateUser();
+    }
+
+    private void GetUserAccountNumber()
+    {
+        const int inputRow = 4;
+        const int inputCol = 2;
+        const int maxInputLength  = 6;
         bool isValidInput;
 
         do
         {
-            // Clear previous input area
-            WriteAt(new string(' ', _boxWidth - 4), inputCol, inputRow);
-
-            // Display prompt
+            WriteAt(new string(' ', BoxWidth - 4), inputCol, inputRow);
             WriteAt(_loginPrompt, inputCol, inputRow);
-
-            // Set cursor position right after the prompt
             Console.SetCursorPosition(inputCol + _loginPrompt.Length, inputRow);
-
-            // Read user input
-            StringBuilder sb = new StringBuilder();
-            ConsoleKeyInfo i = default;
-            int maxLength = 6;
-
-            // while ((Console.ReadKey().Key) != ConsoleKey.Enter)   // 13 = enter key (or other breaking condition)
-            // {
-            //     if (++count > 5)  break;
-            //     sb.Append (i.KeyChar);
-            // }
-
-            while(true) {
-                ConsoleKeyInfo keyInfo = Console.ReadKey();
-                if (keyInfo.Key == ConsoleKey.Enter)
-                {
-                    Console.Beep();
-                    break;
-                }
-                sb.Append(keyInfo.KeyChar);
-                if (sb.Length >= maxLength)
-                {
-                    Console.Beep();
-                    break;
-                }
-            } 
-            
-            // userInput = Console.ReadLine() ?? "";
-
-            // Clear the area where the error message would appear
+            var inputUserAccount = GetUserInput(maxInputLength);
             WriteAt(new string(' ', 6), inputCol + _loginPrompt.Length, inputRow);
-
-            // Validate user input
-            isValidInput = IsValidAccountNumber(sb.ToString());
-
+            isValidInput = IsValidAccountNumber(inputUserAccount);
+            
             if (!isValidInput)
             {
-                // Display invalid message
                 InvalidText();
-                Thread.Sleep(1000); // Delay before allowing new input
+                Thread.Sleep(1000);
             }
+            
         } while (!isValidInput);
 
-        // Clear input area after successful login
-        WriteAt(new string(' ', _boxWidth - 4), inputCol, inputRow);
+        WriteAt(new string(' ', BoxWidth - 4), inputCol, inputRow);
+    }
+
+    private static string GetUserInput(int maxLength)
+    {
+        StringBuilder sb = new StringBuilder();
+
+        while(true) {
+            ConsoleKeyInfo keyInfo = Console.ReadKey();
+            if (keyInfo.Key == ConsoleKey.Enter)
+            {
+                Console.Beep();
+                break;
+            }
+            sb.Append(keyInfo.KeyChar);
+            if (sb.Length >= maxLength)
+            {
+                Console.Beep();
+                break;
+            }
+        }
+
+        return sb.ToString();
     }
 
 
@@ -104,23 +96,23 @@ public class UserInterface
 
         // Draw Title Header
         WriteAt(Rectangle.ul, 0, 0);
-        for (var i = 0; i < _boxWidth - 2; i++) WriteAt(Rectangle.hz, i + 1, 0);
-        WriteAt(Rectangle.ur, _boxWidth, 0);
-        for (var i = 0; i < 3; i++) WriteAt(new string(' ', _boxWidth), 1, i + 1);
-        WriteAt(_title, _boxWidth / 2 - _title.Length / 2, 2);
+        for (var i = 0; i < BoxWidth - 2; i++) WriteAt(Rectangle.hz, i + 1, 0);
+        WriteAt(Rectangle.ur, BoxWidth, 0);
+        for (var i = 0; i < 3; i++) WriteAt(new string(' ', BoxWidth), 1, i + 1);
+        WriteAt(_title, BoxWidth / 2 - _title.Length / 2, 2);
 
         // Draw Sides
-        for (var i = 0; i < _boxHeight - 1; i++) WriteAt(Rectangle.vt, 0, i + 1);
-        for (var i = 0; i < _boxHeight - 1; i++) WriteAt(Rectangle.vt, _boxWidth, i + 1);
+        for (var i = 0; i < BoxHeight - 1; i++) WriteAt(Rectangle.vt, 0, i + 1);
+        for (var i = 0; i < BoxHeight - 1; i++) WriteAt(Rectangle.vt, BoxWidth, i + 1);
 
         //Draw Bottom
-        WriteAt(Rectangle.ll, 0, _boxHeight);
-        for (var i = 0; i < _boxWidth - 1; i++) WriteAt(Rectangle.hz, i + 1, _boxHeight);
-        WriteAt(Rectangle.lr, _boxWidth, _boxHeight);
+        WriteAt(Rectangle.ll, 0, BoxHeight);
+        for (var i = 0; i < BoxWidth - 1; i++) WriteAt(Rectangle.hz, i + 1, BoxHeight);
+        WriteAt(Rectangle.lr, BoxWidth, BoxHeight);
 
         // WriteAt("All done!", 10, 10);
         Console.BackgroundColor = defaultBackground;
-        WriteAt("   ", 0, _boxHeight + 1);
+        WriteAt("   ", 0, BoxHeight + 1);
         Console.ForegroundColor = defaultForeground;
     }
 
@@ -138,7 +130,7 @@ public class UserInterface
         }
     }
 
-    public void InvalidText()
+    private static void InvalidText()
     {
         string outputText = "Invalid account number.";
         Console.ForegroundColor = ConsoleColor.DarkRed;
