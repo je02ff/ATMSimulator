@@ -1,3 +1,4 @@
+using System.Text;
 using static ATMSimulator.Validate;
 
 namespace ATMSimulator;
@@ -27,24 +28,67 @@ public class UserInterface
     private async Task Login()
     {
         string userInput;
+        int inputRow = 4;
+        int inputCol = 2;
+        bool isValidInput;
+
         do
         {
-            WriteAt(new string(' ', _boxWidth - 2), _origCol + 1,_origRow + 4);
-            WriteAt(_loginPrompt, 2, 4);
-            // Console.SetCursorPosition(_origCol + _loginPrompt.Length+2, _origRow + 4);
-            userInput = Console.ReadLine() ?? "";
-            var isValidInput = Validate.IsValidAccountNumber(userInput);
+            // Clear previous input area
+            WriteAt(new string(' ', _boxWidth - 4), inputCol, inputRow);
+
+            // Display prompt
+            WriteAt(_loginPrompt, inputCol, inputRow);
+
+            // Set cursor position right after the prompt
+            Console.SetCursorPosition(inputCol + _loginPrompt.Length, inputRow);
+
+            // Read user input
+            StringBuilder sb = new StringBuilder();
+            ConsoleKeyInfo i = default;
+            int maxLength = 6;
+
+            // while ((Console.ReadKey().Key) != ConsoleKey.Enter)   // 13 = enter key (or other breaking condition)
+            // {
+            //     if (++count > 5)  break;
+            //     sb.Append (i.KeyChar);
+            // }
+
+            while(true) {
+                ConsoleKeyInfo keyInfo = Console.ReadKey();
+                if (keyInfo.Key == ConsoleKey.Enter)
+                {
+                    Console.Beep();
+                    break;
+                }
+                sb.Append(keyInfo.KeyChar);
+                if (sb.Length >= maxLength)
+                {
+                    Console.Beep();
+                    break;
+                }
+            } 
+            
+            // userInput = Console.ReadLine() ?? "";
+
+            // Clear the area where the error message would appear
+            WriteAt(new string(' ', 6), inputCol + _loginPrompt.Length, inputRow);
+
+            // Validate user input
+            isValidInput = IsValidAccountNumber(sb.ToString());
 
             if (!isValidInput)
             {
+                // Display invalid message
                 InvalidText();
-                
-                await Task.Delay(1000);  
+                Thread.Sleep(1000); // Delay before allowing new input
             }
+        } while (!isValidInput);
 
-        } while (!Validate.IsValidAccountNumber(userInput));
-        WriteAt(new string(' ', _boxWidth - 2), _origCol + 1,_origRow + 4);
+        // Clear input area after successful login
+        WriteAt(new string(' ', _boxWidth - 4), inputCol, inputRow);
     }
+
 
     private static void DrawBox(int width, int height)
     {
@@ -98,9 +142,7 @@ public class UserInterface
     {
         string outputText = "Invalid account number.";
         Console.ForegroundColor = ConsoleColor.DarkRed;
-        WriteAt(new string(' ', _boxWidth - _loginPrompt.Length-4), _loginPrompt.Length+2,_origRow + 4);
-        WriteAt(outputText, _loginPrompt.Length+2, 4);
+        WriteAt(outputText, _loginPrompt.Length + 2, 4);
         Console.ResetColor();
     }
-    
 }
