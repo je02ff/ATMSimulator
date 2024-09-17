@@ -17,23 +17,31 @@ public class UserInterface
     {
         //TODO: draw box with title screen at top Below title bar, prompt input for acct#
         DrawBox(_boxWidth, _boxHeight);
-        Login();
+        _ = Login();
         while (true)
         {
             var userInput = Console.ReadLine() ?? "";
         }
     }
 
-    private void Login()
+    private async Task Login()
     {
         string userInput;
         do
         {
             WriteAt(new string(' ', _boxWidth - 2), _origCol + 1,_origRow + 4);
             WriteAt(_loginPrompt, 2, 4);
-            Console.SetCursorPosition(_origCol + _loginPrompt.Length+2, _origRow + 4);
+            // Console.SetCursorPosition(_origCol + _loginPrompt.Length+2, _origRow + 4);
             userInput = Console.ReadLine() ?? "";
-        
+            var isValidInput = Validate.IsValidAccountNumber(userInput);
+
+            if (!isValidInput)
+            {
+                InvalidText();
+                
+                await Task.Delay(1000);  
+            }
+
         } while (!Validate.IsValidAccountNumber(userInput));
         WriteAt(new string(' ', _boxWidth - 2), _origCol + 1,_origRow + 4);
     }
@@ -90,6 +98,9 @@ public class UserInterface
     {
         string outputText = "Invalid account number.";
         Console.ForegroundColor = ConsoleColor.DarkRed;
-        WriteAt(outputText, o);
+        WriteAt(new string(' ', _boxWidth - _loginPrompt.Length-4), _loginPrompt.Length+2,_origRow + 4);
+        WriteAt(outputText, _loginPrompt.Length+2, 4);
         Console.ResetColor();
+    }
+    
 }
