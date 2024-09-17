@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Content Include="bin\Debug\net8.0\ConsoleApp3" />
+      <Content Include="bin\Debug\net8.0\ConsoleApp3.deps.json" />
+      <Content Include="bin\Debug\net8.0\ConsoleApp3.dll" />
+      <Content Include="bin\Debug\net8.0\ConsoleApp3.pdb" />
+      <Content Include="bin\Debug\net8.0\ConsoleApp3.runtimeconfig.json" />
+    </ItemGroup>
+
+</Project>
