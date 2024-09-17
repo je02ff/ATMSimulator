@@ -10,10 +10,11 @@ class Program
         static extern int system(string exec);
         system(@"printf '\e[8;35;100t'"); //adjust terminal window size.
         system(@"printf '\e[3;0;0t'"); // moves terminal to top left
-     
+        
+        /*-----------------*/
+        
         Console.Clear();
         var userInterface = new UserInterface();
-        
-        userInterface.DisplayUi();
+        userInterface.Display();
     }
 }

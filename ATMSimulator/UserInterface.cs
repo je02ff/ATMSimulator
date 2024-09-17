@@ -5,28 +5,30 @@ namespace ATMSimulator;
 
 public class UserInterface
 {
-    private static int _origRow;
-    private static int _origCol;
     private const int BoxWidth = 100;
     private const int BoxHeight = 30;
-    private const int OptionBoxWidth = 25;
-    private const int OptionBoxHeight = 4;
+    private static int _origRow = Console.CursorTop;
+    private static int _origCol = Console.CursorLeft;
+    private static Writer _writer = new(_origRow, _origCol);
     private static string _title = "-^-$- ATM -$-^-";
     private static string _loginPrompt = "Please enter 6-digit account number: ";
 
-    public void DisplayUi()
+    
+
+    public void Display()
     {
-        //TODO: draw box with title screen at top Below title bar, prompt input for acct#
-        DrawBox(BoxWidth, BoxHeight);
+        DrawBorderBox();
         Login();
-        DrawOption("1. Balance", OptionBoxWidth, 5);
-        DrawOption("1. Balance", OptionBoxWidth*2+10, 5);
+        DrawOptions();
+        
         while (true)
         {
             string userInput;
         }
     }
 
+    
+    
     private void Login()
     {
         GetUserAccountNumber();
@@ -43,11 +45,11 @@ public class UserInterface
 
         do
         {
-            WriteAt(new string(' ', BoxWidth - 4), inputCol, inputRow);
-            WriteAt(_loginPrompt, inputCol, inputRow);
+            _writer.WriteAt(new string(' ', BoxWidth - 4), inputCol, inputRow);
+            _writer.WriteAt(_loginPrompt, inputCol, inputRow);
             Console.SetCursorPosition(inputCol + _loginPrompt.Length, inputRow);
             var inputUserAccount = GetUserInput(maxInputLength);
-            WriteAt(new string(' ', 6), inputCol + _loginPrompt.Length, inputRow);
+            _writer.WriteAt(new string(' ', 6), inputCol + _loginPrompt.Length, inputRow);
             isValidInput = IsValidAccountNumber(inputUserAccount);
 
             if (!isValidInput)
@@ -57,9 +59,17 @@ public class UserInterface
             }
         } while (!isValidInput);
 
-        WriteAt(new string(' ', BoxWidth - 4), inputCol, inputRow);
+        _writer.WriteAt(new string(' ', BoxWidth - 4), inputCol, inputRow);
     }
-
+    
+    private static void InvalidText()
+    {
+        string outputText = "Invalid account number.";
+        Console.ForegroundColor = ConsoleColor.DarkRed;
+        _writer.WriteAt(outputText, _loginPrompt.Length + 2, 4);
+        Console.ResetColor();
+    }
+    
     private static string GetUserInput(int maxLength)
     {
         StringBuilder sb = new StringBuilder();
@@ -83,24 +93,42 @@ public class UserInterface
 
         return sb.ToString();
     }
+    
+    
+
+    private static void DrawOptions()
+    {
+        const int optionBoxWidth = 25;
+        const int leftOptionStartX = 32;
+        const int optionStartY = 7;
+        const int  rightOptionStartX = 40+optionBoxWidth;
+
+        //Left Side
+        DrawOption("1. Balance", leftOptionStartX, optionStartY);
+        DrawOption("2. Withdraw", leftOptionStartX, optionStartY*2);
+        DrawOption("3. Transfer", leftOptionStartX, optionStartY*3);
+        
+        //Right Side
+        DrawOption("4. Fast Cash", rightOptionStartX, optionStartY);
+        DrawOption("5. Transactions", rightOptionStartX, optionStartY*2);
+        DrawOption("6. Logout", rightOptionStartX, optionStartY*3);
+    }
 
     private static void DrawOption(string title, int x, int y)
     {
-        
-
-        for (var i = 1; i < OptionBoxWidth; i++) WriteAt("-", i + x, y);
-        for (var i = 1; i < OptionBoxWidth; i++) WriteAt("-", i + x, y + OptionBoxHeight);
-        for (var i = 1; i < OptionBoxHeight; i++) WriteAt("|", x, y + i);
-        for (var i = 1; i < OptionBoxHeight; i++) WriteAt("|", x + OptionBoxWidth, y + i);
-        WriteAt(title, x + (OptionBoxWidth / 2 - title.Length / 2), y + OptionBoxHeight / 2);
+        const int OptionBoxWidth = 25;
+        const int OptionBoxHeight = 4;
+        for (var i = 1; i < OptionBoxWidth; i++) _writer.WriteAt("-", i + x, y);
+        for (var i = 1; i < OptionBoxWidth; i++) _writer.WriteAt("-", i + x, y + OptionBoxHeight);
+        for (var i = 1; i < OptionBoxHeight; i++) _writer.WriteAt("|", x, y + i);
+        for (var i = 1; i < OptionBoxHeight; i++) _writer.WriteAt("|", x + OptionBoxWidth, y + i);
+        _writer.WriteAt(title, x + (OptionBoxWidth / 2 - title.Length / 2), y + OptionBoxHeight / 2);
     }
 
-    private static void DrawBox(int width, int height)
+    private static void DrawBorderBox()
     {
         // Clear the screen, then save the top and left coordinates.
         Console.Clear();
-        _origRow = Console.CursorTop;
-        _origCol = Console.CursorLeft;
 
         var defaultBackground = Console.BackgroundColor;
         var defaultForeground = Console.ForegroundColor;
@@ -108,46 +136,25 @@ public class UserInterface
         Console.ForegroundColor = ConsoleColor.Black;
 
         // Draw Title Header
-        WriteAt(Rectangle.ul, 0, 0);
-        for (var i = 0; i < BoxWidth - 2; i++) WriteAt(Rectangle.hz, i + 1, 0);
-        WriteAt(Rectangle.ur, BoxWidth, 0);
-        for (var i = 0; i < 3; i++) WriteAt(new string(' ', BoxWidth), 1, i + 1);
-        WriteAt(_title, BoxWidth / 2 - _title.Length / 2, 2);
+        _writer.WriteAt(Rectangle.ul, 0, 0);
+        for (var i = 0; i < BoxWidth - 2; i++) _writer.WriteAt(Rectangle.hz, i + 1, 0);
+        _writer.WriteAt(Rectangle.ur, BoxWidth, 0);
+        for (var i = 0; i < 3; i++) _writer.WriteAt(new string(' ', BoxWidth), 1, i + 1);
+        _writer.WriteAt(_title, BoxWidth / 2 - _title.Length / 2, 2);
 
         // Draw Sides
-        for (var i = 0; i < BoxHeight - 1; i++) WriteAt(Rectangle.vt, 0, i + 1);
-        for (var i = 0; i < BoxHeight - 1; i++) WriteAt(Rectangle.vt, BoxWidth, i + 1);
+        for (var i = 0; i < BoxHeight - 1; i++) _writer.WriteAt(Rectangle.vt, 0, i + 1);
+        for (var i = 0; i < BoxHeight - 1; i++) _writer.WriteAt(Rectangle.vt, BoxWidth, i + 1);
 
         //Draw Bottom
-        WriteAt(Rectangle.ll, 0, BoxHeight);
-        for (var i = 0; i < BoxWidth - 1; i++) WriteAt(Rectangle.hz, i + 1, BoxHeight);
-        WriteAt(Rectangle.lr, BoxWidth, BoxHeight);
+        _writer.WriteAt(Rectangle.ll, 0, BoxHeight);
+        for (var i = 0; i < BoxWidth - 1; i++) _writer.WriteAt(Rectangle.hz, i + 1, BoxHeight);
+        _writer.WriteAt(Rectangle.lr, BoxWidth, BoxHeight);
 
         // WriteAt("All done!", 10, 10);
         Console.BackgroundColor = defaultBackground;
-        WriteAt("   ", 0, BoxHeight + 1);
+        _writer.WriteAt("   ", 0, BoxHeight + 1);
         Console.ForegroundColor = defaultForeground;
     }
 
-    private static void WriteAt(string s, int x, int y)
-    {
-        try
-        {
-            Console.SetCursorPosition(_origCol + x, _origRow + y);
-            Console.Write(s);
-        }
-        catch (ArgumentOutOfRangeException e)
-        {
-            Console.Clear();
-            Console.WriteLine(e.Message);
-        }
-    }
-
-    private static void InvalidText()
-    {
-        string outputText = "Invalid account number.";
-        Console.ForegroundColor = ConsoleColor.DarkRed;
-        WriteAt(outputText, _loginPrompt.Length + 2, 4);
-        Console.ResetColor();
-    }
 }
