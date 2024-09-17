@@ -18,14 +18,14 @@ public class UserInterface
     {
         //TODO: draw box with title screen at top Below title bar, prompt input for acct#
         DrawBox(_boxWidth, _boxHeight);
-        _ = Login();
+        Login();
         while (true)
         {
-            var userInput = Console.ReadLine() ?? "";
+            string userInput;
         }
     }
 
-    private async Task Login()
+    private void Login()
     {
         string userInput;
         int inputRow = 4;
