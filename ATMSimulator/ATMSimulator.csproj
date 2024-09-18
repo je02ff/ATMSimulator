@@ -15,4 +15,8 @@
       <Content Include="bin\Debug\net8.0\ATMSimulator.runtimeconfig.json" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="SQLite" Version="3.13.0" />
+    </ItemGroup>
+
 </Project>
