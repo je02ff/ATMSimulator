@@ -1,21 +1,25 @@
+
+
+using Microsoft.Data.Sqlite;
+
 namespace ATMSimulator;
 
 public class DataAccess
 {
-    public void testing()
+    public void GetUser(int accountNumber)
     {
-        using (var connection = new SqliteConnection("Data Source=hello.db"))
+        using (var connection = new SqliteConnection("Data Source=/Users/jeffroden/devRoot/ATMSimulator/ATMSimulator/Atm.db"))
         {
             connection.Open();
-
             var command = connection.CreateCommand();
+            
             command.CommandText =
                 @"
-        SELECT name
-        FROM user
-        WHERE id = $id
-    ";
-            command.Parameters.AddWithValue("$id", id);
+                    SELECT firstName, lastName, balance
+                    FROM users
+                    WHERE accountNumber = $accountNumber
+                ";
+            command.Parameters.AddWithValue("$accountNumber", accountNumber);
 
             using (var reader = command.ExecuteReader())
             {
@@ -28,6 +32,4 @@ public class DataAccess
             }
         }
     }
-    
-
 }

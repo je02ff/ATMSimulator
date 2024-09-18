@@ -11,11 +11,13 @@ public class UserInterface
     public static int BoxHeight => 30;
     private static string _title = "-^-$- ATM -$-^-";
     private Login _login = new();
+    private DataAccess _data = new();
 
     public void Start()
     {
         DrawBorderBox();
         _login.LoginUser();
+        _data.GetUser(accountNumber: 123123);
         DrawOptions();
         
         while (true)
