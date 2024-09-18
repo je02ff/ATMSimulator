@@ -15,6 +15,6 @@ class Program
         
         Console.Clear();
         var userInterface = new UserInterface();
-        userInterface.Display();
+        userInterface.Start();
     }
 }
