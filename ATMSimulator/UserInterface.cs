@@ -1,32 +1,27 @@
+using System.Runtime.InteropServices;
 using System.Text;
 using static ATMSimulator.Validate;
 
 namespace ATMSimulator;
 
-public class UserInterface
+public static class UserInterface
 {
     public static int OrigRow = Console.CursorTop;
     public static int OrigCol = Console.CursorLeft;
     public static int BoxWidth => 100;
     public static int BoxHeight => 30;
     private static string _title = "-^-$- ATM -$-^-";
-    private Login _login = new();
-    private DataAccess _data = new();
 
-    public void Start()
+    public static void Start()
     {
+        [DllImport("libc")]
+        static extern int system(string exec);
+        system(@"printf '\e[8;35;100t'"); //adjust terminal window size.
+        system(@"printf '\e[3;0;0t'"); // moves terminal to top left
         DrawBorderBox();
-        _login.LoginUser();
-        _data.GetUser(accountNumber: 123123);
-        DrawOptions();
-        
-        while (true)
-        {
-            string userInput;
-        }
     }
 
-    private static void DrawOptions()
+    public static void DrawOptions()
     {
         const int optionBoxWidth = 25;
         const int leftOptionStartX = 32;

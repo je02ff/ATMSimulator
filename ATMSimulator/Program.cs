@@ -1,4 +1,5 @@
 ﻿using System.Runtime.InteropServices;
+using ATMSimulator.Model.objects;
 
 namespace ATMSimulator;
 
@@ -6,15 +7,21 @@ class Program
 {
     static void Main(string[] args)
     {
-        [DllImport("libc")]
-        static extern int system(string exec);
-        system(@"printf '\e[8;35;100t'"); //adjust terminal window size.
-        system(@"printf '\e[3;0;0t'"); // moves terminal to top left
-        
-        /*-----------------*/
-        
         Console.Clear();
-        var userInterface = new UserInterface();
-        userInterface.Start();
+        UserInterface.Start();
+
+        User? user = null;
+        
+        while (user == null)
+        {
+            user = Login.LoginUser(user);
+        }
+        UserInterface.DrawOptions();
+        DataAccess data = new();
+        // data.GetUser(accountNumber: 123123);
+        while (true)
+        {
+            
+        }
     }
 }
