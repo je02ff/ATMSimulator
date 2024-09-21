@@ -1,5 +1,4 @@
 using System.Runtime.InteropServices;
-using System.Text;
 using static ATMSimulator.Validate;
 
 namespace ATMSimulator;
@@ -18,7 +17,7 @@ public static class UserInterface
         static extern int system(string exec);
         system(@"printf '\e[8;35;100t'"); //adjust terminal window size.
         system(@"printf '\e[3;0;0t'"); // moves terminal to top left
-        DrawBorderBox();
+        InitView();
     }
 
     public static void DrawOptions()
@@ -50,7 +49,7 @@ public static class UserInterface
         ConsoleUtils.WriteAt(title, x + (optionBoxWidth / 2 - title.Length / 2), y + optionBoxHeight / 2);
     }
 
-    private static void DrawBorderBox()
+    public static void InitView()
     {
         // Clear the screen, then save the top and left coordinates.
         Console.Clear();

@@ -18,7 +18,7 @@ public abstract class ConsoleUtils
         }
     }
 
-    public static void GetUserInput(int maxLength, out string accountNumber)
+    public static string GetUserInput(int maxLength)
     {
         StringBuilder sb = new StringBuilder();
 
@@ -39,6 +39,6 @@ public abstract class ConsoleUtils
             }
         }
 
-        accountNumber = sb.ToString();
+        return sb.ToString();
     }
 }

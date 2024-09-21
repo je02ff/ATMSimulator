@@ -26,7 +26,7 @@ public static class Login
             ConsoleUtils.WriteAt(new string(' ', UserInterface.BoxWidth - 4), inputCol, inputRow);
             ConsoleUtils.WriteAt(_loginPrompt, inputCol, inputRow);
             Console.SetCursorPosition(inputCol + _loginPrompt.Length, inputRow);
-            ConsoleUtils.GetUserInput(maxInputLength, out inputUserAccount);
+            inputUserAccount = ConsoleUtils.GetUserInput(maxInputLength);
             ConsoleUtils.WriteAt(new string(' ', 6), inputCol + _loginPrompt.Length, inputRow);
             isValidInput = Validate.IsValidAccountNumber(inputUserAccount);
 

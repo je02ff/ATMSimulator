@@ -5,9 +5,13 @@ namespace ATMSimulator.Factory;
 
 abstract class OptionFactory
 {
+    protected OptionFactory()
+    {
+        UserInterface.InitView();
+    }
     public abstract IOption BuildOption();
 
-    public void LoadOption()
+    public void Testing()
     {
         var option = BuildOption();
         option.DisplayOption();
